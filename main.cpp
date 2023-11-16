@@ -1,11 +1,12 @@
 #include <iostream>
 #include <exception>
 #include <math.h>
+#include <vector>
 #include "Matrix.h"
 
 Matrix::Matrix() {
-    *M = (int*)calloc(1, sizeof(int));
-    M = (int**)calloc(1, sizeof(int));
+    M = (int**)calloc(1, sizeof(int*));
+    *M = (int*)calloc(1, sizeof(int**));
     colums = 1;
     rows = 1;
 }
@@ -15,9 +16,9 @@ Matrix::Matrix(int colums, int rows) { // colums - столбцы , rows - ст�
     else{
         this->colums = colums;
         this->rows = rows;
-        *M = (int*)calloc(rows, sizeof(int));
+        M = (int**)calloc(rows, sizeof(int*));
         for(int i = 0; i < rows; i++) {
-            M = (int**)calloc(colums, sizeof(int));
+            *M = (int*)calloc(colums, sizeof(int**));
         }
     }
 }
@@ -43,7 +44,11 @@ int Matrix::MatrixGetter(int c, int r) {
 void Matrix::OutPutMatrix() {
     for( int i = 0; i < rows; i++) {
         for(int j = 0; j < colums; j++) {
-            std::cout << M[i][j] << " ";
+            try {
+                std::cout << M[i][j] << " ";
+            } catch (...) {
+                std::cout << M[i][j] << " ";
+            }
         }
         std::cout << "\n";
     }
@@ -89,7 +94,9 @@ int Matrix::MatrixDeterminant() {
         } else {
             Matrix Minor(colums-1, rows-1);
             int minoritercolums = 0, minoriterrows = 0;
-            int AlgebraicComplement[colums];
+            // int VSNIGGERS = colums;
+            //int AlgebraicComplement[];
+            std::vector<int>  AlgebraicComplement(colums);
             for(int i = 0; i < colums; i++) {
                 for(int j = 0; j < colums; j++) {
                     for(int k = 0; k < rows; k++) {
