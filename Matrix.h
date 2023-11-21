@@ -4,9 +4,10 @@ class Matrix {
     int colums, rows;
     protected:
     void GetInf(int& c, int& r);
+    int** GetMatrixInfo();
     public:
     Matrix();
-    Matrix(int colums, int rows);
+    Matrix(int rows, int colums);
     ~Matrix();
     void MatrixSetter(int c, int r, int num);
     int MatrixGetter(int c, int r);
@@ -16,6 +17,7 @@ class Matrix {
     void RandFillMatrix();
     Matrix MatrixTransponent();
     int MatrixDeterminant();
+    void operator=(Matrix OderMatrix);
     bool operator==(Matrix OderMatrix);
     Matrix operator*(Matrix& OderMatrix);
     Matrix operator*(int num);

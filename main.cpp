@@ -6,52 +6,55 @@
 
 Matrix::Matrix() {
     M = (int**)calloc(1, sizeof(int*));
-    *M = (int*)calloc(1, sizeof(int**));
+    M[0] = (int*)calloc(1, sizeof(int));
     colums = 1;
     rows = 1;
 }
-Matrix::Matrix(int colums, int rows) { // colums - столбцы , rows - строки;
+Matrix::Matrix(int rows, int colums) { // colums - столбцы , rows - строки;
     if(colums <= 0 || rows == 0)
     throw std::out_of_range("Exception: colums or/and row can`t be eqwal or lowwer zero.");
     else{
         this->colums = colums;
         this->rows = rows;
         M = (int**)calloc(rows, sizeof(int*));
-        for(int i = 0; i < rows; i++) {
-            *M = (int*)calloc(colums, sizeof(int**));
+        for(int i = 0; i < colums; i++) {
+            M[i] = (int*)calloc(colums, sizeof(int));
         }
     }
 }
 Matrix::~Matrix() {
-    free(M);
+    for (int i = 0; i < rows; i++) {
+        delete [] M[i];
+    }
+    delete [] M;
 }
 void Matrix::GetInf(int& c, int& r) {
     c = colums;
     r = rows;
 }
-void Matrix::MatrixSetter(int c, int r, int num) {
+int** Matrix::GetMatrixInfo() {
+    return M;
+}
+void Matrix::MatrixSetter(int r, int c, int num) {
     if(c < colums && c >= 0 && r < rows && r >= 0)
-    M[c][r] = num;
+    M[r][c] = num;
     else 
     throw std::range_error("Exception: can`t set number matrix of inposible colums or/and rows.");
 }
-int Matrix::MatrixGetter(int c, int r) {
+int Matrix::MatrixGetter(int r, int c) {
     if(c < colums && c >= 0 && r < rows && r >= 0)
-    return M[c][r];
+    return M[r][c];
     else 
     throw std::range_error("Exception: can`t get number matrix of inposible colums or/and rows.");
 }
 void Matrix::OutPutMatrix() {
     for( int i = 0; i < rows; i++) {
         for(int j = 0; j < colums; j++) {
-            try {
-                std::cout << M[i][j] << " ";
-            } catch (...) {
-                std::cout << M[i][j] << " ";
-            }
+            std::cout << M[i][j] << " ";
         }
         std::cout << "\n";
     }
+    std::cout << "\n";
 }
 void Matrix::FillMatrix() {
     for( int i = 0; i < rows; i++) {
@@ -77,7 +80,7 @@ void Matrix::RandFillMatrix() {
     }
 }
 Matrix Matrix::MatrixTransponent() {
-    Matrix TransponentMatrix(rows, colums);
+    Matrix TransponentMatrix(colums, rows);
     for( int i = 0; i < rows; i++) {
         for(int j = 0; j < colums; j++) {
             TransponentMatrix.MatrixSetter(j, i, M[i][j]);
@@ -94,8 +97,6 @@ int Matrix::MatrixDeterminant() {
         } else {
             Matrix Minor(colums-1, rows-1);
             int minoritercolums = 0, minoriterrows = 0;
-            // int VSNIGGERS = colums;
-            //int AlgebraicComplement[];
             std::vector<int>  AlgebraicComplement(colums);
             for(int i = 0; i < colums; i++) {
                 for(int j = 0; j < colums; j++) {
@@ -120,46 +121,53 @@ int Matrix::MatrixDeterminant() {
     } else 
     throw std::out_of_range("Exception: imposible to determenant matrix whis not eqvals numbers of colums and rows.");
 }
+void Matrix::operator=(Matrix OderMatrix) {
+    int OderRows, OderColums;
+    OderMatrix.GetInf(OderRows, OderColums);
+    rows = OderRows;
+    colums = OderColums;
+    M = (int**)calloc(rows, sizeof(int*));
+    for(int i = 0; i < colums; i++) {
+        M[i] = (int*)calloc(colums, sizeof(int));
+    }
+    for(int i = 0; i < rows; i++) {
+        for(int j = 0; j < colums; j++) {
+            M[i][j] = OderMatrix.MatrixGetter(i, j);
+        }
+    }
+}
 bool Matrix::operator==(Matrix OderMatrix) {
     bool IsCorrect = true;
-    try{
-        for(int i = 0; i < colums; i++) {
-            for(int j = 0; j < rows; j++) {
-                if(M[i][j] != OderMatrix.MatrixGetter(i, j))
-                IsCorrect = false;
-            }
+    for(int i = 0; i < rows; i++) {
+        for(int j = 0; j < colums; j++) {
+            if(M[i][j] != OderMatrix.MatrixGetter(i, j))
+            IsCorrect = false;
         }
-    } catch(...) {
-        IsCorrect = false;
     }
     return IsCorrect;
 }
 Matrix Matrix::operator*(Matrix& OderMatrix) {
     int OderColums, OderRows, Summ = 0;
-    OderMatrix.GetInf(OderColums, OderRows);
+    OderMatrix.GetInf(OderRows, OderColums);
     if(colums == OderRows && rows == OderColums) {
-        Matrix result(colums, colums);
-        int resitercolum = 0, resiterrows = 0;
-        for(int i = 0; i < colums; i++) {
+        Matrix result(rows, rows);
+        for(int i = 0; i < rows; i++) {
             for(int j = 0; j < rows; j++) {
-            Summ += M[i][j]*OderMatrix.MatrixGetter(j,i);
+                for(int k = 0; k < colums; k++) {
+                    Summ += M[i][k]*OderMatrix.MatrixGetter(k, j);
+                }
+                result.MatrixSetter(i, j, Summ);
+                Summ = 0;
             }
-            result.MatrixSetter(resitercolum, resiterrows, Summ);
-            Summ = 0;
-            resitercolum++;
-            if(resitercolum == colums) {
-                resitercolum = 0;
-                resiterrows++;
-            }  
         }
         return result;
     } else
     throw std::out_of_range("Exception: imposible multiply matrix on matrix if not eqvals colums of first matrix and rows of second matrix.");
 }
 Matrix Matrix::operator*(int num) {
-    Matrix result(colums, rows);
-    for(int i = 0; i < colums; i++) {
-        for(int j = 0; j < rows; j++) {
+    Matrix result(rows, colums);
+    for(int i = 0; i < rows; i++) {
+        for(int j = 0; j < colums; j++) {
             result.MatrixSetter(i, j, M[i][j]*num);
         }
     }
@@ -169,10 +177,10 @@ Matrix Matrix::operator+(Matrix& OderMatrix) {
     int OderColums, OderRows;
     OderMatrix.GetInf(OderColums, OderRows);
     if(colums == OderColums && rows == OderRows) {
-        Matrix result(colums, rows);
-        for(int i = 0; i < colums; i++) {
-            for(int j = 0; j < rows; j++) {
-                result.MatrixSetter(i, j, M[i][j]+OderMatrix.MatrixGetter(j,i));
+        Matrix result(rows, colums);
+        for(int i = 0; i < rows; i++) {
+            for(int j = 0; j < colums; j++) {
+                result.MatrixSetter(i, j, M[i][j]+OderMatrix.MatrixGetter(i,j));
             }
         }
         return result;
@@ -183,10 +191,10 @@ Matrix Matrix::operator-(Matrix& OderMatrix) {
     int OderColums, OderRows;
     OderMatrix.GetInf(OderColums, OderRows);
     if(colums == OderColums && rows == OderRows) {
-        Matrix result(colums, rows);
-        for(int i = 0; i < colums; i++) {
-            for(int j = 0; j < rows; j++) {
-                result.MatrixSetter(i, j, M[i][j]-OderMatrix.MatrixGetter(j,i));
+        Matrix result(rows, colums);
+        for(int i = 0; i < rows; i++) {
+            for(int j = 0; j < colums; j++) {
+                result.MatrixSetter(i, j, M[i][j]-OderMatrix.MatrixGetter(i, j));
             }
         }
         return result;
@@ -194,12 +202,20 @@ Matrix Matrix::operator-(Matrix& OderMatrix) {
     throw std::out_of_range("Exception: imposible substract matrix of matrix if not eqvals colums/rows of first matrix and colums/rows of second matrix.");
 }
 int main() {
-    Matrix A(5,5), B(5,5);
-    // A.RandFillMatrix();
-    // B.RandFillMatrix();
+    Matrix A(4, 5), B(5, 5);
+    A.RandFillMatrix();
+    B.RandFillMatrix();
+    std::cout << "A:\n";
     A.OutPutMatrix();
+    std::cout << "B:\n";
     B.OutPutMatrix();
-    // Matrix C = A * B;
-    // C.OutPutMatrix();
+    Matrix C = A * B;
+    std::cout << "A * B =\n";
+    C.OutPutMatrix();
+    std::cout << "done\n"; 
+    
+    // Matrix A(3, 3), B(5, 5);
+    // A = B;
+    // A.OutPutMatrix();
     return 0;
 }
