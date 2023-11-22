@@ -5,8 +5,10 @@
 #include "Matrix.h"
 
 Matrix::Matrix() {
-    M = (int**)calloc(1, sizeof(int*));
-    M[0] = (int*)calloc(1, sizeof(int));
+    M = new int*[1];
+    M[0] = new int[1]; 
+    // M = (int**)calloc(1, sizeof(int*));
+    // M[0] = (int*)calloc(1, sizeof(int));
     colums = 1;
     rows = 1;
 }
@@ -14,12 +16,17 @@ Matrix::Matrix(int rows, int colums) { // colums - столбцы , rows - ст�
     if(colums <= 0 || rows == 0)
     throw std::out_of_range("Exception: colums or/and row can`t be eqwal or lowwer zero.");
     else{
+        std::cout<< "hdskjhfkjdsjha\n";
         this->colums = colums;
         this->rows = rows;
-        M = (int**)calloc(rows, sizeof(int*));
-        for(int i = 0; i < colums; i++) {
-            M[i] = (int*)calloc(colums, sizeof(int));
+        M = new int*[rows]{};
+        for(unsigned i{}; i < colums; i++) {
+            M[i] = new int[colums]{};
         }
+        // M = (int**)calloc(rows, sizeof(int*));
+        // for(int i = 0; i < rows; i++) {
+        //     M[i] = (int*)calloc(colums, sizeof(int));
+        // }
     }
 }
 Matrix::~Matrix() {
@@ -28,7 +35,7 @@ Matrix::~Matrix() {
     }
     delete [] M;
 }
-void Matrix::GetInf(int& c, int& r) {
+void Matrix::GetInf(int& r, int& c) {
     c = colums;
     r = rows;
 }
@@ -48,6 +55,7 @@ int Matrix::MatrixGetter(int r, int c) {
     throw std::range_error("Exception: can`t get number matrix of inposible colums or/and rows.");
 }
 void Matrix::OutPutMatrix() {
+    std::cout << rows  << " " << colums;
     for( int i = 0; i < rows; i++) {
         for(int j = 0; j < colums; j++) {
             std::cout << M[i][j] << " ";
@@ -127,11 +135,11 @@ void Matrix::operator=(Matrix OderMatrix) {
     rows = OderRows;
     colums = OderColums;
     M = (int**)calloc(rows, sizeof(int*));
-    for(int i = 0; i < colums; i++) {
+    for(int i = 0; i < rows; i++) {
         M[i] = (int*)calloc(colums, sizeof(int));
     }
     for(int i = 0; i < rows; i++) {
-        for(int j = 0; j < colums; j++) {
+        for(int j = 0; j < rows; j++) {
             M[i][j] = OderMatrix.MatrixGetter(i, j);
         }
     }
@@ -147,12 +155,15 @@ bool Matrix::operator==(Matrix OderMatrix) {
     return IsCorrect;
 }
 Matrix Matrix::operator*(Matrix& OderMatrix) {
+    std::cout<< "hdskjhfkjdsjha";
     int OderColums, OderRows, Summ = 0;
     OderMatrix.GetInf(OderRows, OderColums);
     if(colums == OderRows && rows == OderColums) {
-        Matrix result(rows, rows);
+        Matrix result(rows, OderMatrix.colums);
+        
+        // /* test */ result.OutPutMatrix();
         for(int i = 0; i < rows; i++) {
-            for(int j = 0; j < rows; j++) {
+            for(int j = 0; j < OderColums; j++) {
                 for(int k = 0; k < colums; k++) {
                     Summ += M[i][k]*OderMatrix.MatrixGetter(k, j);
                 }
@@ -202,19 +213,24 @@ Matrix Matrix::operator-(Matrix& OderMatrix) {
     throw std::out_of_range("Exception: imposible substract matrix of matrix if not eqvals colums/rows of first matrix and colums/rows of second matrix.");
 }
 int main() {
-    Matrix A(4, 5), B(5, 5);
+    // srand(time(NULL));
+    Matrix A(4, 5);
+    Matrix B(5, 4);
     A.RandFillMatrix();
     B.RandFillMatrix();
     std::cout << "A:\n";
     A.OutPutMatrix();
-    std::cout << "B:\n";
+    // std::cout << "B:\n";
     B.OutPutMatrix();
-    Matrix C = A * B;
-    std::cout << "A * B =\n";
-    C.OutPutMatrix();
-    std::cout << "done\n"; 
+    // Matrix C = A * B;
+    // C.OutPutMatrix();
+    // std::cout << C.MatrixGetter(0, 0) << "";
+    // std::cout << "A * B =\n";
+    // C.OutPutMatrix();
+    // std::cout << "done\n"; 
     
-    // Matrix A(3, 3), B(5, 5);
+    // Matrix A, B(5, 5);
+    // B.RandFillMatrix();
     // A = B;
     // A.OutPutMatrix();
     return 0;
