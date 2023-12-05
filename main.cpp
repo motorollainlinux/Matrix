@@ -37,12 +37,12 @@ Matrix::Matrix(int rows, int colums) { // colums - столбцы , rows - ст�
 Matrix::~Matrix() {
     colums = 0;
     rows = 0;
-    delete[] M;
+    // delete[] M;
     M = nullptr;
 }
 void Matrix::GetInf(int& r, int& c) {
-    c = colums;
     r = rows;
+    c = colums;
 }
 int** Matrix::GetMatrixInfo() {
     return M;
@@ -102,31 +102,34 @@ Matrix Matrix::MatrixTransponent() {
 }
 int Matrix::MatrixDeterminant() {
     if(colums == rows) {
-        int result = 0;
-        if(colums == 2) {
-            result = M[0][0]*M[1][1] - M[0][1]*M[1][0];
+        if(rows == 2) {
+            double result = M[0][0]*M[1][1]-M[0][1]*M[1][0];
             return result;
         } else {
-            Matrix Minor(colums-1, rows-1);
-            int minoritercolums = 0, minoriterrows = 0;
-            std::vector<int>  AlgebraicComplement(colums);
-            for(int i = 0; i < colums; i++) {
-                for(int j = 0; j < colums; j++) {
+            std::vector<double> AlgebraicCompements(rows);
+            int mi = 0, mj = 0;
+            for(int i = 0; i < rows; i++) {
+                Matrix Minor(rows-1, rows-1);
+                for(int j = 0; j < rows; j++) {
                     for(int k = 0; k < rows; k++) {
-                        if(k != i && j != i) {
-                            Minor.MatrixSetter(minoritercolums, minoriterrows, M[j][k]);
-                            minoritercolums++;
-                            if(minoritercolums == colums) {
-                                minoritercolums = 0;
-                                minoriterrows++;
+                        if(j != i && k != i) {
+                            Minor.MatrixSetter(mi, mj, M[j][k]);
+                            mi++;
+                            if(mi == rows) {
+                                mi = 0;
+                                mj++;
                             }
                         }
                     }
                 }
-                AlgebraicComplement[i] = pow(-1,2*i) * Minor.MatrixDeterminant();
+                mi = 0;
+                mj = 0;
+                Minor.OutPutMatrix();
+                AlgebraicCompements[i] = Minor.MatrixDeterminant();
             }
-            for(int i = 0; i < colums; i++) {
-                result += M[i][i]*AlgebraicComplement[i];
+            double result = 0;
+            for(int i = 0; i < rows; i++) {
+                result += M[0][i]*AlgebraicCompements[i];
             }
             return result;
         }
@@ -139,8 +142,6 @@ void Matrix::operator=(Matrix OderMatrix) {
     for (int i = 0; i < rows; i++) {
         delete [] M[i];
     }
-    // delete [] M;
-    // int **M;
     rows = OderRows;
     colums = OderColums;
     M = new int*[rows];
@@ -179,8 +180,6 @@ Matrix Matrix::operator*(Matrix& OderMatrix) {
                     Summ += M[i][k]*OderMatrix.MatrixGetter(k, j);
                 }
                 result.MatrixSetter(i, j, Summ);
-                // std::cout << "Has setted num [" << i << "][" << j << "] to num: " << Summ << "\n";
-                // std::cout << "[" << i << "][" << j << "]: " << result.MatrixGetter(i, j) << "\n";
                 Summ = 0;
             }
         }
@@ -198,9 +197,9 @@ Matrix Matrix::operator*(int num) {
     return result;
 }
 Matrix Matrix::operator+(Matrix& OderMatrix) {
-    int OderColums, OderRows;
-    OderMatrix.GetInf(OderColums, OderRows);
-    if(colums == OderColums && rows == OderRows) {
+    // int OderColums, OderRows;
+    // OderMatrix.GetInf(OderColums, OderRows);
+    if(colums == OderMatrix.colums && rows == OderMatrix.rows) {
         Matrix result(rows, colums);
         for(int i = 0; i < rows; i++) {
             for(int j = 0; j < colums; j++) {
@@ -212,9 +211,9 @@ Matrix Matrix::operator+(Matrix& OderMatrix) {
     throw std::out_of_range("Exception: imposible add matrix to matrix if not eqvals colums/rows of first matrix and colums/rows of second matrix.");
 }
 Matrix Matrix::operator-(Matrix& OderMatrix) {
-    int OderColums, OderRows;
-    OderMatrix.GetInf(OderColums, OderRows);
-    if(colums == OderColums && rows == OderRows) {
+    // int OderColums, OderRows;
+    // OderMatrix.GetInf(OderColums, OderRows);
+    if(colums == OderMatrix.colums && rows == OderMatrix.rows) {
         Matrix result(rows, colums);
         for(int i = 0; i < rows; i++) {
             for(int j = 0; j < colums; j++) {
@@ -227,6 +226,46 @@ Matrix Matrix::operator-(Matrix& OderMatrix) {
 }
 int main() {
     srand(time(NULL));
+    
+    
+    // Matrix A(4, 5);
+    // Matrix B(4, 5);
+    // A.RandFillMatrix();
+    // A.OutPutMatrix();
+    // B.RandFillMatrix();
+    // B.OutPutMatrix();
+    // Matrix C = A-B;
+    // Matrix D = A+B;
+    // C.OutPutMatrix();
+    // D.OutPutMatrix();
+    
+    // Matrix A(5, 5);
+    // Matrix B(5, 5);
+    // A.FillMatrix(5);
+    // // A.RandFillMatrix();
+    // A.OutPutMatrix();
+    // B.FillMatrix(5);
+    // // B.RandFillMatrix();
+    // B.OutPutMatrix();
+    // if(A == B)
+    // std::cout << "eqvals!!!\n";
+    // else
+    // std::cout << "not eqvals(\n";
+    
+    /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+    // Matrix A(5, 5);
+    // A.RandFillMatrix();
+    // A.OutPutMatrix();
+    // int res = A.MatrixDeterminant();
+    // std::cout << "Determenant: " << res << "\n"; 
+    /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+    
+    // Matrix A(3, 4);
+    // A.RandFillMatrix();
+    // A.OutPutMatrix();
+    // Matrix B = A.MatrixTransponent();
+    // B.OutPutMatrix();
+    
     // Matrix A(4, 5);
     // Matrix B(5, 4);
     // A.RandFillMatrix();
@@ -236,16 +275,16 @@ int main() {
     // std::cout << "B:\n";
     // B.OutPutMatrix();
     // Matrix C = A * B;
-    // // C.OutPutMatrix();
-    // std::cout << C.MatrixGetter(0, 0) << "\n";
-    // // std::cout << "A * B =\n";
-    // // C.OutPutMatrix();
-    // std::cout << "done\n"; 
-    Matrix B(12, 5);
-    Matrix C(5, 12);
-    B.RandFillMatrix();
-    C.RandFillMatrix();
-    Matrix A((const Matrix&)(B*C));
-    A.OutPutMatrix();
+    // std::cout << "A * B =\n";
+    // C.OutPutMatrix();
+    
+    
+    // Matrix B(5, 5);
+    // Matrix C(5, 5);
+    // B.RandFillMatrix();
+    // C.RandFillMatrix();
+    // Matrix A = B*C;
+    // A.OutPutMatrix();
+    std::cout << "done\n";
     return 0;
 }
