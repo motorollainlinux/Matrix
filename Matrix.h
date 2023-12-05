@@ -1,5 +1,6 @@
 class Matrix {
-    private:
+    // private:
+    public:
     int **M;
     int colums, rows;
     protected:
@@ -8,6 +9,7 @@ class Matrix {
     public:
     Matrix();
     Matrix(int rows, int colums);
+    Matrix(const Matrix &other);
     ~Matrix();
     void MatrixSetter(int c, int r, int num);
     int MatrixGetter(int c, int r);
