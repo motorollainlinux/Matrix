@@ -253,11 +253,11 @@ int main() {
     // std::cout << "not eqvals(\n";
     
     /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-    // Matrix A(5, 5);
-    // A.RandFillMatrix();
-    // A.OutPutMatrix();
-    // int res = A.MatrixDeterminant();
-    // std::cout << "Determenant: " << res << "\n"; 
+    Matrix A(5, 5);
+    A.RandFillMatrix();
+    A.OutPutMatrix();
+    int res = A.MatrixDeterminant();
+    std::cout << "Determenant: " << res << "\n"; 
     /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
     
     // Matrix A(3, 4);
