@@ -5,10 +5,8 @@
 #include "Matrix.h"
 
 Matrix::Matrix() {
-    // M = new int*[1];
-    // M[0] = new int[1]; 
-    M = (int**)calloc(1, sizeof(int*));
-    M[0] = (int*)calloc(1, sizeof(int));
+    M = (double**)calloc(1, sizeof(double*));
+    M[0] = (double*)calloc(1, sizeof(double));
     colums = 1;
     rows = 1;
 }
@@ -18,36 +16,30 @@ Matrix::Matrix(const Matrix &other) {
     M = other.M;
 }
 Matrix::Matrix(int rows, int colums) { // colums - столбцы , rows - строки;
-    if(colums <= 0 || rows == 0)
+    if(colums <= 0 || rows <= 0)
     throw std::out_of_range("Exception: colums or/and row can`t be eqwal or lowwer zero.");
     else{
-        // std::cout<< "hdskjhfkjdsjha\n";
         this->colums = colums;
         this->rows = rows;
-        // M = new int*[rows];
-        // for(unsigned i; i < colums; i++) {
-        //     M[i] = new int[colums];
-        // }
-        M = (int**)calloc(rows, sizeof(int*));
+        M = (double**)calloc(rows, sizeof(double*));
         for(int i = 0; i < rows; i++) {
-            M[i] = (int*)calloc(colums, sizeof(int));
+            M[i] = (double*)calloc(colums, sizeof(double));
         }
     }
 }
 Matrix::~Matrix() {
     colums = 0;
     rows = 0;
-    // delete[] M;
     M = nullptr;
 }
-void Matrix::GetInf(int& r, int& c) {
-    r = rows;
-    c = colums;
-}
-int** Matrix::GetMatrixInfo() {
-    return M;
-}
-void Matrix::MatrixSetter(int r, int c, int num) {
+// void Matrix::GetInf(int& r, int& c) {
+//     r = rows;
+//     c = colums;
+// }
+// double** Matrix::GetMatrixInfo() {
+//     return M;
+// }
+void Matrix::MatrixSetter(int r, int c, double num) {
     if(c < colums && c >= 0 && r < rows && r >= 0)
     M[r][c] = num;
     else 
@@ -83,13 +75,43 @@ void Matrix::FillMatrix(int num) {
     }
 }
 void Matrix::RandFillMatrix() {
-    int RandomNum = 0;
+    double RandomNum = 0;
     for( int i = 0; i < rows; i++) {
         for(int j = 0; j < colums; j++) {
             RandomNum = rand()%10;
             M[i][j] = RandomNum;
         }
     }
+}
+double Matrix::MatrixDeterminant() {
+    if(colums == rows) {
+        if(rows == 2) 
+        return M[0][0]*M[1][1]-M[0][1]*M[1][0];
+        else {
+            double result = 0;
+            int mi = 0, mj = 0;
+            for(int i = 0; i < rows; i++) {
+                Matrix Minor(rows-1, rows-1);
+                for(int j = 0; j < rows; j++) {
+                    for(int k = 0; k < rows; k++) {
+                        if(j != 0 && k != i) {
+                            Minor.MatrixSetter(mi, mj, M[j][k]);
+                            mj++;
+                            if(mj > Minor.rows-1) {
+                                mj = 0;
+                                mi++;
+                            }
+                        }
+                    }
+                }
+                mi = 0;
+                mj = 0;
+                result += pow(-1, i+2) * M[0][i] * Minor.MatrixDeterminant();
+            }
+            return result;
+        }
+    } else 
+    throw std::out_of_range("Det func Exception: imposible to determenant matrix whis not eqvals numbers of colums and rows.");
 }
 Matrix Matrix::MatrixTransponent() {
     Matrix TransponentMatrix(colums, rows);
@@ -100,58 +122,58 @@ Matrix Matrix::MatrixTransponent() {
     }
     return TransponentMatrix;
 }
-int Matrix::MatrixDeterminant() {
+Matrix Matrix::AlgCompliments() {
     if(colums == rows) {
-        if(rows == 2) {
-            double result = M[0][0]*M[1][1]-M[0][1]*M[1][0];
-            return result;
-        } else {
-            std::vector<double> AlgebraicCompements(rows);
-            int mi = 0, mj = 0;
-            for(int i = 0; i < rows; i++) {
+        // std::cout << "det: " << this->MatrixDeterminant() << "\n";
+        Matrix result(rows, colums);
+        int mi = 0, mj = 0;
+        for(int i = 0; i < rows; i++) {
+            for(int j = 0; j < rows; j++) {
                 Matrix Minor(rows-1, rows-1);
-                for(int j = 0; j < rows; j++) {
-                    for(int k = 0; k < rows; k++) {
-                        if(j != i && k != i) {
-                            Minor.MatrixSetter(mi, mj, M[j][k]);
-                            mi++;
-                            if(mi == rows) {
-                                mi = 0;
-                                mj++;
+                for(int k = 0; k < rows; k++) {
+                    for(int n = 0; n < rows; n++) {
+                        if(k != i && n != j) {
+                            // std::cout << "tess[" << k << "][" << n << "] = " << M[k][n] << "\n";
+                            Minor.MatrixSetter(mi, mj, M[k][n]);
+                            mj++;
+                            if(mj > Minor.rows-1) {
+                                mj = 0;
+                                mi++;
                             }
                         }
                     }
                 }
                 mi = 0;
                 mj = 0;
-                Minor.OutPutMatrix();
-                AlgebraicCompements[i] = Minor.MatrixDeterminant();
+                // Minor.OutPutMatrix();
+                result.MatrixSetter(i, j, pow(-1, (i+1)+(j+1)) * Minor.MatrixDeterminant());
+                result = result.MatrixTransponent();
             }
-            double result = 0;
-            for(int i = 0; i < rows; i++) {
-                result += M[0][i]*AlgebraicCompements[i];
-            }
-            return result;
         }
+        return result;
     } else 
-    throw std::out_of_range("Exception: imposible to determenant matrix whis not eqvals numbers of colums and rows.");
+    throw std::out_of_range("AlgCompliment func Exception: imposible to determenant matrix whis not eqvals numbers of colums and rows.");
+}
+Matrix Matrix::InverseMatrix() {
+    Matrix Complements = this->AlgCompliments();
+    double determinant = this->MatrixDeterminant();
+    if(determinant == 0)
+    throw std::out_of_range("Exeption: Can`t find inverse matrix when determinant eqval 0.");
+    Matrix result = Complements * (1/determinant);
+    return result;
 }
 void Matrix::operator=(Matrix OderMatrix) {
-    int OderRows, OderColums;
-    OderMatrix.GetInf(OderRows, OderColums);
+    // int OderRows, OderColums;
+    // OderMatrix.GetInf(OderRows, OderColums);
     for (int i = 0; i < rows; i++) {
         delete [] M[i];
     }
-    rows = OderRows;
-    colums = OderColums;
-    M = new int*[rows];
+    rows = OderMatrix.rows;
+    colums = OderMatrix.colums;
+    M = (double**)calloc(rows, sizeof(double*));
     for(int i = 0; i < rows; i++) {
-        M[i] = new int[colums];
+        M[i] = (double*)calloc(colums, sizeof(double));
     }
-    // M = (int**)calloc(rows, sizeof(int*));
-    // for(int i = 0; i < rows; i++) {
-    //     M[i] = (int*)calloc(colums, sizeof(int));
-    // }
     for(int i = 0; i < rows; i++) {
         for(int j = 0; j < colums; j++) {
             M[i][j] = OderMatrix.MatrixGetter(i, j);
@@ -169,13 +191,12 @@ bool Matrix::operator==(Matrix OderMatrix) {
     return IsCorrect;
 }
 Matrix Matrix::operator*(Matrix& OderMatrix) {
-    int OderColums, OderRows, Summ = 0;
-    OderMatrix.GetInf(OderRows, OderColums);
-    if(colums == OderRows && rows == OderColums) {
+    int Summ = 0;
+    // OderMatrix.GetInf(OderRows, OderColums);
+    if(colums == OderMatrix.rows && rows == OderMatrix.colums) {
         Matrix result(rows, OderMatrix.colums);
-        // /* test */ result.OutPutMatrix();
         for(int i = 0; i < rows; i++) {
-            for(int j = 0; j < OderColums; j++) {
+            for(int j = 0; j < OderMatrix.colums; j++) {
                 for(int k = 0; k < colums; k++) {
                     Summ += M[i][k]*OderMatrix.MatrixGetter(k, j);
                 }
@@ -187,7 +208,7 @@ Matrix Matrix::operator*(Matrix& OderMatrix) {
     } else
     throw std::out_of_range("Exception: imposible multiply matrix on matrix if not eqvals colums of first matrix and rows of second matrix.");
 }
-Matrix Matrix::operator*(int num) {
+Matrix Matrix::operator*(double num) {
     Matrix result(rows, colums);
     for(int i = 0; i < rows; i++) {
         for(int j = 0; j < colums; j++) {
@@ -196,9 +217,16 @@ Matrix Matrix::operator*(int num) {
     }
     return result;
 }
+Matrix Matrix::operator/(double num) {
+    Matrix result(rows, colums);
+    for(int i = 0; i < rows; i++) {
+        for(int j = 0; j < colums; j++) {
+            result.MatrixSetter(i, j, M[i][j]/num);
+        }
+    }
+    return result;
+}
 Matrix Matrix::operator+(Matrix& OderMatrix) {
-    // int OderColums, OderRows;
-    // OderMatrix.GetInf(OderColums, OderRows);
     if(colums == OderMatrix.colums && rows == OderMatrix.rows) {
         Matrix result(rows, colums);
         for(int i = 0; i < rows; i++) {
@@ -211,8 +239,6 @@ Matrix Matrix::operator+(Matrix& OderMatrix) {
     throw std::out_of_range("Exception: imposible add matrix to matrix if not eqvals colums/rows of first matrix and colums/rows of second matrix.");
 }
 Matrix Matrix::operator-(Matrix& OderMatrix) {
-    // int OderColums, OderRows;
-    // OderMatrix.GetInf(OderColums, OderRows);
     if(colums == OderMatrix.colums && rows == OderMatrix.rows) {
         Matrix result(rows, colums);
         for(int i = 0; i < rows; i++) {
@@ -225,8 +251,22 @@ Matrix Matrix::operator-(Matrix& OderMatrix) {
     throw std::out_of_range("Exception: imposible substract matrix of matrix if not eqvals colums/rows of first matrix and colums/rows of second matrix.");
 }
 int main() {
-    srand(time(NULL));
+    // srand(time(NULL));
     
+
+    // Matrix A(5, 5);
+    // A.RandFillMatrix();
+    // A.OutPutMatrix();
+    // Matrix B = A.InverseMatrix();
+    // B.OutPutMatrix();
+
+    // Matrix A(5, 5);
+    // A.RandFillMatrix();
+    // A.OutPutMatrix();
+    // Matrix B;
+    // B = A.AlgCompliments();
+    // std::cout << "det1:                                     " << B.MatrixDeterminant() << "\n";
+    // B.OutPutMatrix();
     
     // Matrix A(4, 5);
     // Matrix B(4, 5);
@@ -252,13 +292,11 @@ int main() {
     // else
     // std::cout << "not eqvals(\n";
     
-    /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-    Matrix A(5, 5);
-    A.RandFillMatrix();
-    A.OutPutMatrix();
-    int res = A.MatrixDeterminant();
-    std::cout << "Determenant: " << res << "\n"; 
-    /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+    // Matrix A(5, 5);
+    // A.RandFillMatrix();
+    // A.OutPutMatrix();
+    // double res = A.MatrixDeterminant();
+    // std::cout << "Determenant: " << res << "\n"; 
     
     // Matrix A(3, 4);
     // A.RandFillMatrix();
