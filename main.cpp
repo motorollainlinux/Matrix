@@ -32,13 +32,6 @@ Matrix::~Matrix() {
     rows = 0;
     M = nullptr;
 }
-// void Matrix::GetInf(int& r, int& c) {
-//     r = rows;
-//     c = colums;
-// }
-// double** Matrix::GetMatrixInfo() {
-//     return M;
-// }
 void Matrix::MatrixSetter(int r, int c, double num) {
     if(c < colums && c >= 0 && r < rows && r >= 0)
     M[r][c] = num;
@@ -124,7 +117,6 @@ Matrix Matrix::MatrixTransponent() {
 }
 Matrix Matrix::AlgCompliments() {
     if(colums == rows) {
-        // std::cout << "det: " << this->MatrixDeterminant() << "\n";
         Matrix result(rows, colums);
         int mi = 0, mj = 0;
         for(int i = 0; i < rows; i++) {
@@ -133,7 +125,6 @@ Matrix Matrix::AlgCompliments() {
                 for(int k = 0; k < rows; k++) {
                     for(int n = 0; n < rows; n++) {
                         if(k != i && n != j) {
-                            // std::cout << "tess[" << k << "][" << n << "] = " << M[k][n] << "\n";
                             Minor.MatrixSetter(mi, mj, M[k][n]);
                             mj++;
                             if(mj > Minor.rows-1) {
@@ -145,7 +136,6 @@ Matrix Matrix::AlgCompliments() {
                 }
                 mi = 0;
                 mj = 0;
-                // Minor.OutPutMatrix();
                 result.MatrixSetter(i, j, pow(-1, (i+1)+(j+1)) * Minor.MatrixDeterminant());
                 result = result.MatrixTransponent();
             }
@@ -163,8 +153,6 @@ Matrix Matrix::InverseMatrix() {
     return result;
 }
 void Matrix::operator=(Matrix OderMatrix) {
-    // int OderRows, OderColums;
-    // OderMatrix.GetInf(OderRows, OderColums);
     for (int i = 0; i < rows; i++) {
         delete [] M[i];
     }
@@ -192,7 +180,6 @@ bool Matrix::operator==(Matrix OderMatrix) {
 }
 Matrix Matrix::operator*(Matrix& OderMatrix) {
     int Summ = 0;
-    // OderMatrix.GetInf(OderRows, OderColums);
     if(colums == OderMatrix.rows && rows == OderMatrix.colums) {
         Matrix result(rows, OderMatrix.colums);
         for(int i = 0; i < rows; i++) {

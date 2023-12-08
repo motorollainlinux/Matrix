@@ -2,8 +2,6 @@ class Matrix {
     protected:
     double **M;
     int colums, rows;
-    // void GetInf(int& c, int& r);
-    // double** GetMatrixInfo();
     public:
     Matrix();
     Matrix(int rows, int colums);
