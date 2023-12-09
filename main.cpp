@@ -15,7 +15,13 @@ Matrix::Matrix(const Matrix &other) {
     colums = other.colums;
     M = other.M;
 }
-Matrix::Matrix(int rows, int colums) { // colums - столбцы , rows - строки;
+Matrix::Matrix(Matrix &&other) {
+    rows = other.rows;
+    colums = other.colums;
+    M = other.M;
+    other.~Matrix();
+}
+Matrix::Matrix(int rows, int colums) {
     if(colums <= 0 || rows <= 0)
     throw std::out_of_range("Exception: colums or/and row can`t be eqwal or lowwer zero.");
     else{
@@ -52,6 +58,41 @@ void Matrix::OutPutMatrix() {
         std::cout << "\n";
     }
     std::cout << "\n";
+}
+void Matrix::OutPutMatrix(bool Condition) {
+    for( int i = 0; i < rows; i++) {
+        for(int j = 0; j < colums; j++) {
+            if (M[i][j] >= 0 && M[i][j] <= 9 && Condition)
+            std::cout << " ";
+            std::cout << M[i][j] << " ";
+        }
+        std::cout << "\n";
+    }
+    std::cout << "\n";
+}
+void Matrix::OutPutMatrix(std::string Ms, bool Condition) {
+    std::cout << Ms << "\n";
+    for( int i = 0; i < rows; i++) {
+        for(int j = 0; j < colums; j++) {
+            if (M[i][j] >= 0 && M[i][j] <= 9 && Condition)
+            std::cout << " ";
+            std::cout << M[i][j] << " ";
+        }
+        std::cout << "\n";
+    }
+    std::cout << "\n";
+}
+void Matrix::OutPutMatrix(std::string StartMs, std::string EndMs, bool Condition) {
+    std::cout << StartMs << "\n";
+    for( int i = 0; i < rows; i++) {
+        for(int j = 0; j < colums; j++) {
+            if (M[i][j] >= 0 && M[i][j] <= 9 && Condition)
+            std::cout << " ";
+            std::cout << M[i][j] << " ";
+        }
+        std::cout << "\n";
+    }
+    std::cout << EndMs << "\n";
 }
 void Matrix::FillMatrix() {
     for( int i = 0; i < rows; i++) {
@@ -238,9 +279,8 @@ Matrix Matrix::operator-(Matrix& OderMatrix) {
     throw std::out_of_range("Exception: imposible substract matrix of matrix if not eqvals colums/rows of first matrix and colums/rows of second matrix.");
 }
 int main() {
-    // srand(time(NULL));
+    srand(time(NULL));
     
-
     // Matrix A(5, 5);
     // A.RandFillMatrix();
     // A.OutPutMatrix();
@@ -252,19 +292,18 @@ int main() {
     // A.OutPutMatrix();
     // Matrix B;
     // B = A.AlgCompliments();
-    // std::cout << "det1:                                     " << B.MatrixDeterminant() << "\n";
     // B.OutPutMatrix();
     
     // Matrix A(4, 5);
     // Matrix B(4, 5);
     // A.RandFillMatrix();
-    // A.OutPutMatrix();
+    // A.OutPutMatrix("A = {", "};\n", false);
     // B.RandFillMatrix();
-    // B.OutPutMatrix();
+    // B.OutPutMatrix("B = {", "};\n", false);
     // Matrix C = A-B;
     // Matrix D = A+B;
-    // C.OutPutMatrix();
-    // D.OutPutMatrix();
+    // C.OutPutMatrix("A - B = {", "};\n", true);
+    // D.OutPutMatrix("A + B = {", "};\n", true);
     
     // Matrix A(5, 5);
     // Matrix B(5, 5);
@@ -295,14 +334,10 @@ int main() {
     // Matrix B(5, 4);
     // A.RandFillMatrix();
     // B.RandFillMatrix();
-    // std::cout << "A:\n";
-    // A.OutPutMatrix();
-    // std::cout << "B:\n";
-    // B.OutPutMatrix();
-    // Matrix C = A * B;
-    // std::cout << "A * B =\n";
-    // C.OutPutMatrix();
-    
+    // A.OutPutMatrix("A: ", false);
+    // B.OutPutMatrix("B: ", false);
+    // Matrix C = /**/A * B/**/ /**A / 5/**/;
+    // C.OutPutMatrix("A/5 = ", false);
     
     // Matrix B(5, 5);
     // Matrix C(5, 5);
