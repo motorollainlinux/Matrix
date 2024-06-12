@@ -280,71 +280,9 @@ Matrix Matrix::operator-(Matrix& OderMatrix) {
 }
 int main() {
     srand(time(NULL));
-    
-    // Matrix A(5, 5);
-    // A.RandFillMatrix();
-    // A.OutPutMatrix();
-    // Matrix B = A.InverseMatrix();
-    // B.OutPutMatrix();
-
-    // Matrix A(5, 5);
-    // A.RandFillMatrix();
-    // A.OutPutMatrix();
-    // Matrix B;
-    // B = A.AlgCompliments();
-    // B.OutPutMatrix();
-    
-    // Matrix A(4, 5);
-    // Matrix B(4, 5);
-    // A.RandFillMatrix();
-    // A.OutPutMatrix("A = {", "};\n", false);
-    // B.RandFillMatrix();
-    // B.OutPutMatrix("B = {", "};\n", false);
-    // Matrix C = A-B;
-    // Matrix D = A+B;
-    // C.OutPutMatrix("A - B = {", "};\n", true);
-    // D.OutPutMatrix("A + B = {", "};\n", true);
-    
-    // Matrix A(5, 5);
-    // Matrix B(5, 5);
-    // A.FillMatrix(5);
-    // // A.RandFillMatrix();
-    // A.OutPutMatrix();
-    // B.FillMatrix(5);
-    // // B.RandFillMatrix();
-    // B.OutPutMatrix();
-    // if(A == B)
-    // std::cout << "eqvals!!!\n";
-    // else
-    // std::cout << "not eqvals(\n";
-    
-    // Matrix A(5, 5);
-    // A.RandFillMatrix();
-    // A.OutPutMatrix();
-    // double res = A.MatrixDeterminant();
-    // std::cout << "Determenant: " << res << "\n"; 
-    
-    // Matrix A(3, 4);
-    // A.RandFillMatrix();
-    // A.OutPutMatrix();
-    // Matrix B = A.MatrixTransponent();
-    // B.OutPutMatrix();
-    
-    // Matrix A(4, 5);
-    // Matrix B(5, 4);
-    // A.RandFillMatrix();
-    // B.RandFillMatrix();
-    // A.OutPutMatrix("A: ", false);
-    // B.OutPutMatrix("B: ", false);
-    // Matrix C = /**/A * B/**/ /**A / 5/**/;
-    // C.OutPutMatrix("A/5 = ", false);
-    
-    // Matrix B(5, 5);
-    // Matrix C(5, 5);
-    // B.RandFillMatrix();
-    // C.RandFillMatrix();
-    // Matrix A = B*C;
-    // A.OutPutMatrix();
+    Matrix A(5, 5);
+    A.RandFillMatrix();
+    A.AlgCompliments();
     std::cout << "done\n";
     return 0;
 }
